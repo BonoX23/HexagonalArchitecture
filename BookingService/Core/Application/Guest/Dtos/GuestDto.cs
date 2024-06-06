@@ -12,6 +12,7 @@ namespace Application.Guest.DTO
         public string Email { get; set; }
         public string IdNumber { get; set; }
         public int IdTypeCode { get; set; }
+
         public static Entities.Guest MapToEntity(GuestDto guestDTO)
         {
             return new Entities.Guest

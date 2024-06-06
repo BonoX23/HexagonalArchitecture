@@ -1,0 +1,82 @@
+using Application.Guest;
+using Application.Guest.DTO;
+using Application.Guest.Requests;
+using Application.Ports;
+using AutoFixture;
+using Domain.Entities;
+using Domain.Ports;
+using Moq;
+
+namespace ApplicationTests
+{
+
+    public class Tests
+    {
+        GuestManager _guestManager;
+        Mock<IGuestRepository> _mockRepo;
+        Fixture _fixture;
+
+        [SetUp]
+        public void Setup()
+        {
+            _fixture = new Fixture();
+            _mockRepo = new Mock<IGuestRepository>();
+            _guestManager = new GuestManager(_mockRepo.Object);
+        }
+
+        [Test]
+        public async Task HappyPathWithoutAutoFixure()
+        {
+            var guestDto = new GuestDto
+            {
+                Name = "Fulano",
+                Surname = "Ciclano",
+                Email = "abc@gmail.com",
+                IdNumber = "abca",
+                IdTypeCode = 1
+            };
+
+            int expectedId = 222;
+
+            var request = new CreateGuestRequest()
+            {
+                Data = guestDto,
+            };
+
+            _mockRepo.Setup(x => x.Create(It.IsAny<Guest>())).Returns(Task.FromResult(expectedId));
+
+            _guestManager = new GuestManager(_mockRepo.Object);
+
+            var res = await _guestManager.CreateGuest(request);
+
+            Assert.IsNotNull(res);
+            Assert.True(res.Success);
+            Assert.AreEqual(res.Data.Id, expectedId);
+            Assert.AreEqual(res.Data.Name, guestDto.Name);
+        }
+
+        [Test]
+        public async Task HappyPathWithAutoFixure()
+        {
+            var guestDto = _fixture.Create<GuestDto>();
+
+            int expectedId = guestDto.Id;
+
+            var request = new CreateGuestRequest()
+            {
+                Data = guestDto,
+            };
+
+            _mockRepo.Setup(x => x.Create(It.IsAny<Guest>())).Returns(Task.FromResult(expectedId));
+
+            _guestManager = new GuestManager(_mockRepo.Object);
+
+            var res = await _guestManager.CreateGuest(request);
+
+            Assert.IsNotNull(res);
+            Assert.True(res.Success);
+            Assert.AreEqual(res.Data.Id, expectedId);
+            Assert.AreEqual(res.Data.Name, guestDto.Name);
+        }
+    }
+}
