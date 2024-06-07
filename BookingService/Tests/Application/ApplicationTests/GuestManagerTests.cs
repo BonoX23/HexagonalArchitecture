@@ -1,3 +1,4 @@
+using Application;
 using Application.Guest;
 using Application.Guest.DTO;
 using Application.Guest.Requests;
@@ -77,6 +78,91 @@ namespace ApplicationTests
             Assert.True(res.Success);
             Assert.AreEqual(res.Data.Id, expectedId);
             Assert.AreEqual(res.Data.Name, guestDto.Name);
+        }
+
+        [TestCase("")]
+        [TestCase(null)]
+        [TestCase("a")]
+        [TestCase("ab")]
+        [TestCase("abc")]
+        public async Task Should_Return_InvalidPersonDocumentIdException_WhenDocsAreInvalid(string docNumber)
+        {
+            var guestDto = _fixture.Build<GuestDto>()
+                           .With(x => x.IdNumber, docNumber)
+                           .Create();
+
+            int expectedId = guestDto.Id;
+
+            var request = new CreateGuestRequest()
+            {
+                Data = guestDto,
+            };
+
+            _mockRepo.Setup(x => x.Create(It.IsAny<Guest>())).Returns(Task.FromResult(expectedId));
+
+             _guestManager = new GuestManager(_mockRepo.Object);
+
+            var res = await _guestManager.CreateGuest(request);
+
+            Assert.IsNotNull(res);
+            Assert.False(res.Success);
+            Assert.AreEqual(res.ErrorCode, ErrorCodes.INVALID_PERSON_ID);
+            Assert.AreEqual(res.Message, "The ID passed is not valid");
+        }
+
+        [TestCase("", "", "")]
+        [TestCase(null,null,null)]
+        public async Task Should_Return_MissingRequiredInformation_WhenNameOrSurnameOrEmailAreInvalid(string name, string surname, string email)
+        {
+            var guestDto = _fixture.Build<GuestDto>()
+                           .With(x => x.Name, name)
+                           .With(x => x.Surname, surname)
+                           .With(x => x.Email, email)
+                           .Create();
+
+            int expectedId = guestDto.Id;
+
+            var request = new CreateGuestRequest()
+            {
+                Data = guestDto,
+            };
+
+            _mockRepo.Setup(x => x.Create(It.IsAny<Guest>())).Returns(Task.FromResult(expectedId));
+
+            _guestManager = new GuestManager(_mockRepo.Object);
+
+            var res = await _guestManager.CreateGuest(request);
+
+            Assert.IsNotNull(res);
+            Assert.False(res.Success);
+            Assert.AreEqual(res.ErrorCode, ErrorCodes.MISSING_REQUIRED_INFORMATION);
+            Assert.AreEqual(res.Message, "Missing required information passed");
+        }
+
+        [TestCase("b@b.com")]
+        public async Task Should_Return_InvalidEmailException_WhenDocsAreInvalid(string email)
+        {
+            var guestDto = _fixture.Build<GuestDto>()
+                           .With(x => x.Email, email)
+                           .Create();
+
+            int expectedId = guestDto.Id;
+
+            var request = new CreateGuestRequest()
+            {
+                Data = guestDto,
+            };
+
+            _mockRepo.Setup(x => x.Create(It.IsAny<Guest>())).Returns(Task.FromResult(expectedId));
+
+            _guestManager = new GuestManager(_mockRepo.Object);
+
+            var res = await _guestManager.CreateGuest(request);
+
+            Assert.IsNotNull(res);
+            Assert.False(res.Success);
+            Assert.AreEqual(res.ErrorCode, ErrorCodes.INVALID_EMAIL);
+            Assert.AreEqual(res.Message, "The given email is not valid");
         }
     }
 }
