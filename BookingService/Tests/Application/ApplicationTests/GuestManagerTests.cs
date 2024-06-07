@@ -2,7 +2,6 @@ using Application;
 using Application.Guest;
 using Application.Guest.DTO;
 using Application.Guest.Requests;
-using Application.Ports;
 using AutoFixture;
 using Domain.Entities;
 using Domain.Ports;
@@ -163,6 +162,42 @@ namespace ApplicationTests
             Assert.False(res.Success);
             Assert.AreEqual(res.ErrorCode, ErrorCodes.INVALID_EMAIL);
             Assert.AreEqual(res.Message, "The given email is not valid");
+        }
+
+        [Test]
+        public async Task Should_Return_GuestNotFound_When_GuestDoesntExist()
+        {
+            var fakeId = _fixture.Create<int>();
+
+            _mockRepo.Setup(x => x.Get(fakeId)).Returns(Task.FromResult<Guest?>(null));
+
+            _guestManager = new GuestManager(_mockRepo.Object);
+
+            var res = await _guestManager.GetGuest(fakeId);
+
+            Assert.IsNotNull(res);
+            Assert.False(res.Success);
+            Assert.AreEqual(res.ErrorCode, ErrorCodes.GUEST_NOT_FOUND);
+            Assert.AreEqual(res.Message, "No Guest record was found with the given Id");
+        }
+
+        [Test]
+        public async Task Should_Return_Guest_Success()
+        {
+            var guest = _fixture.Create<Guest>();
+
+            int fakeId = guest.Id;
+
+            _mockRepo.Setup(x => x.Get(fakeId)).Returns(Task.FromResult((Guest?)guest));
+
+            _guestManager = new GuestManager(_mockRepo.Object);
+
+            var res = await _guestManager.GetGuest(fakeId);
+
+            Assert.IsNotNull(res);
+            Assert.True(res.Success);
+            Assert.AreEqual(res.Data.Id, guest.Id);
+            Assert.AreEqual(res.Data.Name, guest.Name);
         }
     }
 }
