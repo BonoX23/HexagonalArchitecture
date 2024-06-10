@@ -2,7 +2,7 @@ using Application.Guest;
 using Application.Ports;
 using Data;
 using Data.Guest;
-using Domain.Ports;
+using Domain.Guest.Ports;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

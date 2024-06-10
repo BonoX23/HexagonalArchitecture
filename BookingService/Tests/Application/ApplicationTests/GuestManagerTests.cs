@@ -3,8 +3,8 @@ using Application.Guest;
 using Application.Guest.DTO;
 using Application.Guest.Requests;
 using AutoFixture;
-using Domain.Entities;
-using Domain.Ports;
+using Domain.Guest.Entities;
+using Domain.Guest.Ports;
 using Moq;
 
 namespace ApplicationTests
