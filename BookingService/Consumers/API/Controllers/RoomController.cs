@@ -15,10 +15,10 @@ namespace API.Controllers
 
         public RoomController(
             ILogger<GuestsController> logger,
-            IRoomManager roomManage)
+            IRoomManager roomManager)
         {
             _logger = logger;
-            _roomManager = _roomManager;
+            _roomManager = roomManager;
         }
 
         [HttpPost]
