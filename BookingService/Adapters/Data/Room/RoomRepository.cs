@@ -21,7 +21,9 @@ namespace Data.Room
 
         public Task<Domain.Room.Entities.Room> Get(int Id)
         {
-            return _hotelDbContext.Rooms.Where(g => g.Id == Id).FirstOrDefaultAsync();
+            return _hotelDbContext.Rooms
+                .Where(g => g.Id == Id)
+                .FirstOrDefaultAsync();
         }
 
         public Task<Domain.Room.Entities.Room> GetAggregate(int Id)

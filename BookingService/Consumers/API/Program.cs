@@ -1,8 +1,16 @@
+using Application.Booking.Ports;
+using Application.Booking;
 using Application.Guest;
 using Application.Ports;
+using Application.Room.Ports;
+using Application.Room;
 using Data;
+using Data.Booking;
 using Data.Guest;
+using Data.Room;
+using Domain.Booking.Ports;
 using Domain.Guest.Ports;
+using Domain.Room.Ports;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +23,10 @@ builder.Services.AddControllers();
 # region IoC
 builder.Services.AddScoped<IGuestManager, GuestManager>();
 builder.Services.AddScoped<IGuestRepository, GuestRepository>();
+builder.Services.AddScoped<IRoomManager, RoomManager>();
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+builder.Services.AddScoped<IBookingManager, BookingManager>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 # endregion
 
 # region DB wiring up

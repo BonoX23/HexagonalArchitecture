@@ -4,11 +4,6 @@ using Application.Room.Request;
 using Application.Room.Responses;
 using Domain.Room.Exceptions;
 using Domain.Room.Ports;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Room
 {
@@ -44,6 +39,7 @@ namespace Application.Room
                     Message = "Missing required information passed"
                 };
             }
+
             catch (Exception)
             {
                 return new RoomResponse
@@ -55,9 +51,25 @@ namespace Application.Room
             }
         }
 
-        public Task<RoomResponse> GetRoom(int roomId)
+        public async Task<RoomResponse> GetRoom(int roomId)
         {
-            throw new NotImplementedException();
+            var room = await _roomRepository.Get(roomId);
+
+            if (room == null)
+            {
+                return new RoomResponse
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.ROOM_NOT_FOUND,
+                    Message = "Room not found"
+                };
+            }
+
+            return new RoomResponse
+            {
+                Success = true,
+                Data = RoomDto.MapToDto(room),
+            };
         }
     }
 }

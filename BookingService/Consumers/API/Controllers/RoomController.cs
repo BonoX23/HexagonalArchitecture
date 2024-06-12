@@ -1,7 +1,7 @@
 ﻿using Application;
-using Application.Ports;
 using Application.Room.Dtos;
 using Application.Room.Ports;
+using Application.Room.Request;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -24,7 +24,12 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<RoomDto>> Post(RoomDto room)
         {
-            var res = await _mediator.Send(request);
+            var request = new CreateRoomRequest()
+            {
+                Data = room
+            };
+
+            var res = await _roomManager.CreateRoom(request);
 
             if (res.Success) return Created("", res.Data);
 

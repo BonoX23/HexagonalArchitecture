@@ -1,6 +1,7 @@
 ﻿using Domain.Guest.ValueObjects;
 using Domain.Room.Exceptions;
 using Domain.Room.Ports;
+using System;
 
 namespace Domain.Room.Entities
 {
@@ -11,46 +12,76 @@ namespace Domain.Room.Entities
         public int Level { get; set; }
         public bool InMaintenance { get; set; }
         public Price Price { get; set; }
+        public ICollection<Guest.Entities.Booking> Bookings { get; set; }
         public bool IsAvailable
         {
             get
             {
-                if (InMaintenance || HasGuest)
+                if (this.InMaintenance || this.HasGuest)
                 {
                     return false;
                 }
+
                 return true;
             }
         }
+
         public bool HasGuest
         {
-            // Verificar se existem booking abertos para esta room
             get
             {
-                return true;
+                var notAvailableStatuses = new List<Guest.Enums.Status>()
+                {
+                    Guest.Enums.Status.Created,
+                    Guest.Enums.Status.Paid,
+                };
+
+                return this.Bookings?.Where(
+                    b => b.Room.Id == this.Id &&
+                    notAvailableStatuses.Contains(b.Status)).Count() > 0;
             }
         }
 
         private void ValidateState()
         {
-            if (string.IsNullOrEmpty(Name))
+            if (string.IsNullOrEmpty(this.Name))
             {
                 throw new InvalidRoomDataException();
             }
 
-            if (Price == null || Price.Value < 10)
+            if (this.Price == null || this.Price.Value < 10)
             {
                 throw new InvalidRoomPriceException();
             }
         }
 
+        public bool CanBeBooked()
+        {
+            try
+            {
+                this.ValidateState();
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
+
+            if (!this.IsAvailable)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public async Task Save(IRoomRepository roomRepository)
         {
-            ValidateState();
+            this.ValidateState();
 
-            if (Id == 0)
+            if (this.Id == 0)
             {
-                Id = await roomRepository.Create(this);
+                this.Id = await roomRepository.Create(this);
             }
             else
             {

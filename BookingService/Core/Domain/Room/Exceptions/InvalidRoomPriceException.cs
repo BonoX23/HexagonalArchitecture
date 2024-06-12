@@ -1,6 +1,6 @@
 ﻿namespace Domain.Room.Exceptions
 {
-    internal class InvalidRoomPriceException : Exception
+    public class InvalidRoomPriceException : Exception
     {
     }
 }
