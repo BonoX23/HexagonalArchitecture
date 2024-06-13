@@ -1,6 +1,8 @@
 ﻿using Application.Booking.Dtos;
 using Application.Booking.Ports;
 using Application.Booking.Responses;
+using Application.Payment.Ports;
+using Application.Payment.Responses;
 using Domain.Booking.Exceptions;
 using Domain.Booking.Ports;
 using Domain.Guest.Ports;
@@ -13,14 +15,19 @@ namespace Application.Booking
         private readonly IBookingRepository _bookingRepository;
         private readonly IRoomRepository _roomRepository;
         private readonly IGuestRepository _guestRepository;
+        private readonly IPaymentProcessorFactory _paymentProcessorFactory;
+
         public BookingManager(IBookingRepository bookingRepository,
             IRoomRepository roomRepository,
-            IGuestRepository guestRepository)
+            IGuestRepository guestRepository,
+            IPaymentProcessorFactory paymentProcessorFactory)
         {
             _roomRepository = roomRepository;
             _guestRepository = guestRepository;
             _bookingRepository = bookingRepository;
+            _paymentProcessorFactory = paymentProcessorFactory;
         }
+
         public async Task<BookingResponse> CreateBooking(BookingDto bookingDto)
         {
             try
@@ -95,10 +102,30 @@ namespace Application.Booking
             }
         }
 
+        public async Task<PaymentResponse> PayForBooking(PaymentRequestDto paymentRequestDto)
+        {
+            var paymentProcessor = _paymentProcessorFactory.GetPaymentProcessor(paymentRequestDto.SelectedPaymentProvider);
+
+            var response = await paymentProcessor.CapturePayment(paymentRequestDto.PaymentIntention);
+
+            if (response.Success)
+            {
+                return new PaymentResponse
+                {
+                    Success = true,
+                    Data = response.Data,
+                    Message = "Payment successfully processed"
+                };
+            }
+
+            return response;
+        }
+
         public Task<BookingDto> GetBooking(int id)
         {
             throw new NotImplementedException();
         }
+
     }
 }
 
