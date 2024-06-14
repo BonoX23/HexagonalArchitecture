@@ -16,12 +16,15 @@ using Microsoft.EntityFrameworkCore;
 using Application.Payment.Ports;
 using Payments.Application;
 using System.Text.Json.Serialization;
+using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddMediatR(typeof(BookingManager));
+
 
 # region IoC
 builder.Services.AddScoped<IGuestManager, GuestManager>();

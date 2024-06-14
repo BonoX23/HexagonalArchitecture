@@ -1,37 +1,35 @@
 ﻿using Application.Booking.Dtos;
-using Application.Booking.Ports;
 using Application.Booking.Responses;
 using Application.Payment.Ports;
-using Application.Payment.Responses;
 using Domain.Booking.Exceptions;
 using Domain.Booking.Ports;
 using Domain.Guest.Ports;
 using Domain.Room.Ports;
+using MediatR;
 
-namespace Application.Booking
+namespace Application.Booking.Commands
 {
-    public class BookingManager : IBookingManager
+    public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, BookingResponse>
     {
         private readonly IBookingRepository _bookingRepository;
         private readonly IRoomRepository _roomRepository;
         private readonly IGuestRepository _guestRepository;
         private readonly IPaymentProcessorFactory _paymentProcessorFactory;
-
-        public BookingManager(IBookingRepository bookingRepository,
+        public CreateBookingCommandHandler(
+            IBookingRepository bookingRepository,
             IRoomRepository roomRepository,
-            IGuestRepository guestRepository,
-            IPaymentProcessorFactory paymentProcessorFactory)
+            IGuestRepository guestRepository)
         {
             _roomRepository = roomRepository;
             _guestRepository = guestRepository;
             _bookingRepository = bookingRepository;
-            _paymentProcessorFactory = paymentProcessorFactory;
         }
 
-        public async Task<BookingResponse> CreateBooking(BookingDto bookingDto)
+        public async Task<BookingResponse> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
         {
             try
             {
+                var bookingDto = request.BookingDto;
                 var booking = BookingDto.MapToEntity(bookingDto);
                 booking.Guest = await _guestRepository.Get(bookingDto.GuestId);
                 booking.Room = await _roomRepository.GetAggregate(bookingDto.RoomId);
@@ -101,31 +99,5 @@ namespace Application.Booking
                 };
             }
         }
-
-        public async Task<PaymentResponse> PayForABooking(PaymentRequestDto paymentRequestDto)
-        {
-            var paymentProcessor = _paymentProcessorFactory.GetPaymentProcessor(paymentRequestDto.SelectedPaymentProvider);
-
-            var response = await paymentProcessor.CapturePayment(paymentRequestDto.PaymentIntention);
-
-            if (response.Success)
-            {
-                return new PaymentResponse
-                {
-                    Success = true,
-                    Data = response.Data,
-                    Message = "Payment successfully processed"
-                };
-            }
-
-            return response;
-        }
-
-        public Task<BookingDto> GetBooking(int id)
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }
-
