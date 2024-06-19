@@ -169,7 +169,7 @@ namespace ApplicationTests
                 Id = command.BookingDto.GuestId,
                 DocumentId = new Domain.Guest.ValueObjects.PersonId
                 {
-                    DocumentType = Domain.Guest.Enums.DocumentType.Passport,
+                    DocumentType = Domain.Guest.Enums.DocumentType.DriveLicense,
                     IdNumber = "abc1234"
                 },
                 Email = "a@a.com",
@@ -203,7 +203,6 @@ namespace ApplicationTests
                 Id = 1,
                 Room = fakeRoom,
                 Guest = fakeGuest,
-
             };
 
             var bookingRepoMock = new Mock<IBookingRepository>();
