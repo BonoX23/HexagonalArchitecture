@@ -12,9 +12,9 @@ namespace ApplicationTests
 
     public class Tests
     {
-        GuestManager _guestManager;
-        Mock<IGuestRepository> _mockRepo;
-        Fixture _fixture;
+        private GuestManager _guestManager;
+        private Mock<IGuestRepository> _mockRepo;
+        private Fixture _fixture;
 
         [SetUp]
         public void Setup()
