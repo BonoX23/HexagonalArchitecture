@@ -8,7 +8,7 @@ namespace Domain.Guest.Enums
 {
     public enum DocumentType
     {
-        Passport = 0,
-        DriveLicense = 1,
+        Passport = 1,
+        DriveLicense = 2,
     }
 }

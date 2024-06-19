@@ -169,7 +169,7 @@ namespace ApplicationTests
                 Id = command.BookingDto.GuestId,
                 DocumentId = new Domain.Guest.ValueObjects.PersonId
                 {
-                    DocumentType = Domain.Guest.Enums.DocumentType.DriveLicense,
+                    DocumentType = Domain.Guest.Enums.DocumentType.Passport,
                     IdNumber = "abc1234"
                 },
                 Email = "a@a.com",
