@@ -439,19 +439,33 @@ dotnet test BookingService/Tests/Application/ApplicationTests/ApplicationTests.c
 
 ---
 
-## 📝 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
----
-
 ## 👨‍💻 Autor
+
+<table>
+  <tr>
+    <td align="center">
+      <strong>Ricardo Bono da Silva</strong>
+      <br/>
+      Desenvolvedor .NET
+    </td>
+  </tr>
+</table>
 
 Desenvolvido com dedicação para demonstrar conhecimentos em:
 - Arquitetura de Software
 - Padrões de Projeto
 - Desenvolvimento .NET
 - Boas práticas de código
+
+---
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+```
+MIT License - Copyright (c) 2024 Ricardo Bono da Silva
+```
 
 ---
 
